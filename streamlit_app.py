@@ -1,15 +1,9 @@
+import os
 import streamlit as st
 import random
 from openai import OpenAI
 
-#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
-
-# 사이드바에 OpenAI API 키 입력받기
-with st.sidebar:
-    openai_api_key = st.text_input("OpenAI API Key를 입력하세요", type="password")
-    st.markdown("[OpenAI API 키 받기](https://platform.openai.com/account/api-keys)")
-
-st.title("🔎 재희를 찾아라!")
+st.title("🔎 뿅뿅이를 찾아라!")
 
 # 세션 상태 초기화
 if 'culprit_position' not in st.session_state:
@@ -17,12 +11,12 @@ if 'culprit_position' not in st.session_state:
     st.session_state.guesses = 0
     st.session_state.questions = {1: [], 2: [], 3: []}
 
-# OpenAI API 키 설정
-if openai_api_key:
-    OpenAI.api_key = openai_api_key
-else:
-    st.warning("OpenAI API 키를 입력하세요.")
-    st.stop()
+# # OpenAI API 키 설정
+# if openai_api_key:
+#     OpenAI.api_key = "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"
+# else:
+#     st.warning("OpenAI API 키를 입력하세요.")
+#     st.stop()
 
 # 3x3 그리드 생성
 positions = []
@@ -35,16 +29,18 @@ for i in range(3):
                 if st.session_state.guesses < 2:
                     st.session_state.guesses += 1
                     if pos == st.session_state.culprit_position:
-                        st.success("🎉 재희를 찾았습니다!")
+                        st.success("🎉 뿅뿅이를 찾았습니다!")
                     else:
-                        st.error("😢 재희가 없습니다.")
+                        st.error("😢 뿅뿅이가 없습니다.")
                 else:
                     st.warning("❗ 시도 횟수를 모두 사용하셨습니다.")
             positions.append(pos)
 
 st.write(f"🕵️‍♂️ 남은 시도 횟수: {2 - st.session_state.guesses}번")
 
-openai_client = OpenAI()
+openai_client = OpenAI(
+    api_key='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'
+)
 
 # 캐릭터 응답 함수
 def get_character_response(character_id, player_question):
@@ -65,7 +61,7 @@ def get_character_response(character_id, player_question):
             {"role": "system", "content": prompt},
         ]
     )
-    answer = response.choices[0].message
+    answer = response.choices[0].message.content
     return answer
 
 # 일반인들에게 질문하기
