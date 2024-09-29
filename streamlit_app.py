@@ -2,21 +2,20 @@ import os
 import streamlit as st
 import random
 from openai import OpenAI
+from dotenv import load_dotenv
 
-st.title("🔎 뿅뿅이를 찾아라!")
+# Load environment variables
+load_dotenv()
+
+api_key = os.getenv('OPENAI_API_KEY')
+
+st.title("🔎 정혀니가 재희를 찾으러 가는길!")
 
 # 세션 상태 초기화
 if 'culprit_position' not in st.session_state:
     st.session_state.culprit_position = random.randint(1, 9)
     st.session_state.guesses = 0
     st.session_state.questions = {1: [], 2: [], 3: []}
-
-# # OpenAI API 키 설정
-# if openai_api_key:
-#     OpenAI.api_key = "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"
-# else:
-#     st.warning("OpenAI API 키를 입력하세요.")
-#     st.stop()
 
 # 3x3 그리드 생성
 positions = []
@@ -29,9 +28,9 @@ for i in range(3):
                 if st.session_state.guesses < 2:
                     st.session_state.guesses += 1
                     if pos == st.session_state.culprit_position:
-                        st.success("🎉 뿅뿅이를 찾았습니다!")
+                        st.success("🎉 재희를 찾았습니다!")
                     else:
-                        st.error("😢 뿅뿅이가 없습니다.")
+                        st.error("😢 재희가 없습니다.")
                 else:
                     st.warning("❗ 시도 횟수를 모두 사용하셨습니다.")
             positions.append(pos)
@@ -39,7 +38,7 @@ for i in range(3):
 st.write(f"🕵️‍♂️ 남은 시도 횟수: {2 - st.session_state.guesses}번")
 
 openai_client = OpenAI(
-    api_key='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'
+    api_key=api_key
 )
 
 # 캐릭터 응답 함수
@@ -47,9 +46,9 @@ def get_character_response(character_id, player_question):
     culprit_position = st.session_state.culprit_position
     prompt = f"""
     당신은 탐정 게임의 캐릭터인 일반인 {character_id}입니다.
-    플레이어가 범인을 찾기 위해 당신에게 질문을 합니다.
-    범인은 1부터 9까지의 위치 중 {culprit_position}번에 있습니다.
-    당신은 범인의 위치에 대한 단서를 줄 수 있지만, 직접적으로 위치를 알려주지는 마세요.
+    플레이어가 재희를 찾기 위해 당신에게 질문을 합니다.
+    재희는 1부터 9까지의 위치 중 {culprit_position}번에 있습니다.
+    당신은 재희의 위치에 대한 단서를 줄 수 있지만, 직접적으로 위치를 알려주지는 마세요.
     플레이어의 질문에 친절하고 간결하게 답변하세요.
 
     플레이어의 질문: "{player_question}"
@@ -82,4 +81,4 @@ for i in range(1, 4):
 
 # 게임 종료 확인
 if st.session_state.guesses >= 2 and st.session_state.culprit_position != pos:
-    st.error("게임 오버! 범인을 찾지 못했습니다.")
+    st.error("게임 오버! 재희를 찾지 못했습니다.ㅠㅠ")
